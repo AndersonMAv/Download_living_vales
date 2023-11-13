@@ -16,16 +16,7 @@ exports.config = {
     migrations: {
         extension: 'ts',
         directory: './db/migrations'
-    },
-    pool: {
-        min: 0,
-        max: 10,
     }
 };
-setTimeout(function () {
-    exports.knex.raw('SELECT 1').catch(function (error) {
-        console.log('caught exception trying to issue database keep-alive');
-    });
-}, 0);
 exports.knex = (0, knex_1.knex)(exports.config);
 //# sourceMappingURL=database.js.map
