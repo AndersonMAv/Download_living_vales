@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MapboxGeocoding = void 0;
 const axios_1 = __importDefault(require("axios"));
-const lat_lng_1 = require("data/lat-lng");
+const lat_lng_1 = require("../../data/lat-lng");
 class MapboxGeocoding {
     geocode(address) {
         var _a, _b;
