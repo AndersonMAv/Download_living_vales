@@ -10,4 +10,4 @@ exports.DepositTypes = {
     depD2: 'Sucata, lixo, entulho',
     depE: 'Bromélia, folha de coqueiro, folha de bananeira, ocos de troncos de árvore, depósitos naturais',
 };
-//# sourceMappingURL=DepositTypes.js.map
+//# sourceMappingURL=deposit-types.js.map

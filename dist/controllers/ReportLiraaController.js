@@ -12,6 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const address_1 = require("data/address");
+const geocoding_1 = require("geocoding/geocoding");
 const zod_1 = require("zod");
 const database_1 = require("../database");
 const DateUtilities_1 = __importDefault(require("../utilities/DateUtilities"));
@@ -89,9 +91,26 @@ class ReportLiraaController {
                             const { id, municipio, uf, bairro, campoData, supervisor, labData, responsavel, nome, numQuart, logradouro, complemento, tipoImv, depA1, depA2, depB, depC, depD1, depD2, depE, amostras, tubitos, labEx, labAeg, labAlb, aegDepA1, aegDepA2, aegDepB, aegDepC, aegDepD1, aegDepD2, aegDepE, depAlb, longitude, latitude, tempo, temperatura, umidade, larvas, pupas, exuvias, adultos, } = liraReport;
                             const dateField = dateUtilities.formatStringDmY(campoData);
                             const labDate = dateUtilities.formatStringDmY(labData);
-                            const validateTempo = tempo === 'null' ? '' : tempo;
-                            const validateTemperatura = temperatura === 'null' ? '' : temperatura;
-                            const validateUmidade = umidade === 'null' ? '' : umidade;
+                            // Validate LatLng
+                            let lat = Number(latitude);
+                            let lng = Number(longitude);
+                            if (!lat || !lng || lat == 0 || lng == 0) {
+                                try {
+                                    const address = new address_1.Address();
+                                    address.streetName = logradouro;
+                                    address.houseNumber = complemento.replace(/[^-.0-9]/g, '');
+                                    address.block = bairro && bairro.split('-').length > 1 ? bairro.split('-')[1] : bairro;
+                                    address.city = municipio;
+                                    address.state = uf;
+                                    const latLng = yield geocoding_1.GeocodingFactory.instance().geocode(address);
+                                    lat = latLng.latitude;
+                                    lng = latLng.longitude;
+                                }
+                                catch (error) {
+                                    console.log(error);
+                                }
+                            }
+                            // Persist LIRA report
                             yield (0, database_1.knex)('report_lira').insert({
                                 id,
                                 municipio,
@@ -126,8 +145,8 @@ class ReportLiraaController {
                                 aegDepD2,
                                 aegDepE,
                                 depAlb,
-                                longitude: Number(longitude),
-                                latitude: Number(latitude),
+                                longitude: lng,
+                                latitude: lat,
                                 tempo,
                                 temperatura,
                                 umidade,

@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const deposit_types_1 = require("../data/deposit-types");
 const database_1 = require("../database");
-const DepositTypes_1 = require("../data/DepositTypes");
 class LocationController {
     getLocations(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -45,31 +45,31 @@ class LocationController {
             liraaPositions.forEach((element) => {
                 let depositsLiraa = [];
                 if (element.depA1 && element.depA1 > 0) {
-                    depositsLiraa.push(DepositTypes_1.DepositTypes.depA1);
+                    depositsLiraa.push(deposit_types_1.DepositTypes.depA1);
                 }
                 delete element.depA1;
                 if (element.depA2 && element.depA2 > 0) {
-                    depositsLiraa.push(DepositTypes_1.DepositTypes.depA2);
+                    depositsLiraa.push(deposit_types_1.DepositTypes.depA2);
                 }
                 delete element.depA2;
                 if (element.depB && element.depB > 0) {
-                    depositsLiraa.push(DepositTypes_1.DepositTypes.depB);
+                    depositsLiraa.push(deposit_types_1.DepositTypes.depB);
                 }
                 delete element.depB;
                 if (element.depC && element.depC > 0) {
-                    depositsLiraa.push(DepositTypes_1.DepositTypes.depC);
+                    depositsLiraa.push(deposit_types_1.DepositTypes.depC);
                 }
                 delete element.depC;
                 if (element.depD1 && element.depD1 > 0) {
-                    depositsLiraa.push(DepositTypes_1.DepositTypes.depD1);
+                    depositsLiraa.push(deposit_types_1.DepositTypes.depD1);
                 }
                 delete element.depD1;
                 if (element.depD2 && element.depD2 > 0) {
-                    depositsLiraa.push(DepositTypes_1.DepositTypes.depD2);
+                    depositsLiraa.push(deposit_types_1.DepositTypes.depD2);
                 }
                 delete element.depD2;
                 if (element.depE && element.depE > 0) {
-                    depositsLiraa.push(DepositTypes_1.DepositTypes.depE);
+                    depositsLiraa.push(deposit_types_1.DepositTypes.depE);
                 }
                 delete element.depE;
                 element.deposits = depositsLiraa;
