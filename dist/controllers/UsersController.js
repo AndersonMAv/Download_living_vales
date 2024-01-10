@@ -12,27 +12,46 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const zod_1 = require("zod");
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const database_1 = require("../database");
 const node_crypto_1 = require("node:crypto");
+const zod_1 = require("zod");
+const database_1 = require("../database");
 class UsersController {
-    store(req, res) {
+    login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const createUserSchema = zod_1.z.object({
+                password: zod_1.z.string(),
+                email: zod_1.z.string(),
+            });
+            const { email, password } = createUserSchema.parse(req.body);
+            const user = yield (0, database_1.knex)("users").select().where("email", email).first();
+            const validate = user && bcrypt_1.default.compareSync(password, user.password);
+            if (validate) {
+                let sessionId = (0, node_crypto_1.randomUUID)();
+                return res.status(201).send({
+                    user,
+                    sessionId: sessionId,
+                });
+            }
+            return res.status(401).send({ message: "Unauthorized" });
+        });
+    }
+    register(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userSchema = zod_1.z.object({
                 name: zod_1.z.string(),
                 password: zod_1.z.string(),
                 email: zod_1.z.string(),
             });
-            const { name, password, email } = createUserSchema.parse(req.body);
+            const { name, password, email } = userSchema.parse(req.body);
             const hash_password = yield bcrypt_1.default.hash(password, 5);
-            const user = yield (0, database_1.knex)('users').select().where('email', email).first();
+            const user = yield (0, database_1.knex)("users").select().where("email", email).first();
             if (!user) {
-                yield (0, database_1.knex)('users').insert({
+                yield (0, database_1.knex)("users").insert({
                     id: (0, node_crypto_1.randomUUID)(),
                     name,
                     email,
-                    password: hash_password
+                    password: hash_password,
                 });
                 return res.status(201).send();
             }
@@ -41,23 +60,36 @@ class UsersController {
             }
         });
     }
-    login(req, res) {
+    update(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const createUserSchema = zod_1.z.object({
-                password: zod_1.z.string(),
+            const { id } = req.params;
+            const user = yield (0, database_1.knex)("users").select().where("id", id).first();
+            const userSchema = zod_1.z.object({
+                name: zod_1.z.string(),
                 email: zod_1.z.string(),
+                password: zod_1.z.string().optional(),
             });
-            const { email, password } = createUserSchema.parse(req.body);
-            const user = yield (0, database_1.knex)('users').select().where('email', email).first();
-            const validate = user && bcrypt_1.default.compareSync(password, user.password);
-            if (validate) {
-                let sessionId = (0, node_crypto_1.randomUUID)();
-                return res.status(201).send({
-                    user,
-                    'sessionId': sessionId
-                });
-            }
-            return res.status(401).send({ message: 'Unauthorized' });
+            const { name, email, password } = userSchema.parse(req.body);
+            const hash_password = password
+                ? yield bcrypt_1.default.hash(password, 5)
+                : user === null || user === void 0 ? void 0 : user.password;
+            yield (0, database_1.knex)("users")
+                .update({ name, email, password: hash_password })
+                .where("id", id);
+            return res.status(200).end();
+        });
+    }
+    delete(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            yield (0, database_1.knex)("users").where("id", id).del();
+            return res.status(200).end();
+        });
+    }
+    fetchAll(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const users = yield (0, database_1.knex)("users").orderBy("name");
+            res.status(200).json(users);
         });
     }
 }
