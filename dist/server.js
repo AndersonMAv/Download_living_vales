@@ -32,7 +32,7 @@ function createServer() {
         const staticDir = path_1.default.join(__dirname, '..', 'static');
         app.use(express_1.default.static(staticDir));
         app.get('*', (req, res) => {
-            const indexHtml = path_1.default.join(__dirname, '..', 'public', 'index.html');
+            const indexHtml = path_1.default.join(__dirname, '..', 'static', 'index.html');
             res.sendFile(indexHtml);
         });
         app.listen(env_1.env.SERVER_PORT, () => {
