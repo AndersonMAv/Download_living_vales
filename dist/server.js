@@ -29,7 +29,7 @@ function createServer() {
         app.all(['/api', '/api/*'], (req, res) => {
             res.sendStatus(404);
         });
-        const staticDir = path_1.default.join(__dirname, '..', 'public');
+        const staticDir = path_1.default.join(__dirname, '..', 'static');
         app.use(express_1.default.static(staticDir));
         app.get('*', (req, res) => {
             const indexHtml = path_1.default.join(__dirname, '..', 'public', 'index.html');
